@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>機票一鍵搜尋啟動台</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <h1>✈️ 機票一鍵搜尋啟動台</h1>
+    <p class="subtitle">輸入一次，一鍵打開所有可信任平台的搜尋結果</p>
+  </header>
+
+  <main class="container">
+    <form id="searchForm" class="card" autocomplete="off">
+      <!-- 行程模式 -->
+      <div class="trip-modes" role="tablist">
+        <label class="mode active"><input type="radio" name="tripMode" value="oneway" checked /> 單程</label>
+        <label class="mode"><input type="radio" name="tripMode" value="round" /> 來回</label>
+        <label class="mode"><input type="radio" name="tripMode" value="multi" /> 多點進出</label>
+      </div>
+
+      <!-- 單程 / 來回 區塊 -->
+      <div id="simpleFields">
+        <div class="row">
+          <div class="field">
+            <label>出發地</label>
+            <input type="text" id="from" placeholder="台北 / Taipei / TPE" />
+            <div class="suggest" id="suggest-from"></div>
+          </div>
+          <button type="button" class="swap" id="swapBtn" title="對調">⇄</button>
+          <div class="field">
+            <label>目的地</label>
+            <input type="text" id="to" placeholder="東京 / Tokyo / NRT" />
+            <div class="suggest" id="suggest-to"></div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="field">
+            <label>出發日期</label>
+            <input type="date" id="departDate" />
+          </div>
+          <div class="field" id="returnField" hidden>
+            <label>回程日期</label>
+            <input type="date" id="returnDate" />
+          </div>
+        </div>
+      </div>
+
+      <!-- 多點進出 區塊 -->
+      <div id="multiFields" hidden>
+        <div id="segments"></div>
+        <button type="button" class="add-seg" id="addSegBtn">＋ 新增航段</button>
+      </div>
+
+      <!-- 乘客 / 艙等 -->
+      <div class="row">
+        <div class="field small">
+          <label>成人</label>
+          <input type="number" id="adults" min="1" max="9" value="1" />
+        </div>
+        <div class="field small">
+          <label>兒童</label>
+          <input type="number" id="children" min="0" max="9" value="0" />
+        </div>
+        <div class="field">
+          <label>艙等</label>
+          <select id="cabin">
+            <option value="economy">經濟艙</option>
+            <option value="premiumeconomy">豪華經濟艙</option>
+            <option value="business">商務艙</option>
+            <option value="first">頭等艙</option>
+          </select>
+        </div>
+      </div>
+
+      <button type="submit" class="primary" id="searchBtn">產生各平台搜尋連結</button>
+      <p class="error" id="errorMsg" hidden></p>
+    </form>
+
+    <!-- 結果區 -->
+    <section id="results" class="card" hidden>
+      <div class="results-head">
+        <h2>搜尋結果</h2>
+        <button type="button" class="ghost" id="openAllBtn">全部開啟（需允許彈窗）</button>
+      </div>
+      <p class="hint" id="resultsSummary"></p>
+      <div class="links-grid" id="linksGrid"></div>
+
+      <div class="alerts-box">
+        <h3>🔔 降價提醒</h3>
+        <p class="hint">這些平台有「內建價格追蹤」，會自動每天監看、降價時 email 你（需登入該平台帳號）。點下方連結到搜尋頁後，按該平台的「追蹤價格 / Price alerts」即可。</p>
+        <div class="links-grid" id="alertsGrid"></div>
+      </div>
+
+      <p class="disclaimer">
+        本工具只把你帶到各平台的搜尋頁，<strong>不代刷卡、不代下單</strong>。
+        付款請在你選定的平台自行完成。標示「首頁」的平台無法自動帶入條件，需手動再輸入一次。
+      </p>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>只連結可信任的大型平台 · 純前端工具 · 不收集你的資料</p>
+  </footer>
+
+  <script src="airports.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
