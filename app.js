@@ -124,22 +124,34 @@ function collectLegs(mode) {
   if (mode === "multi") {
     const segEls = document.querySelectorAll("#segments .segment");
     const legs = [];
+    let i = 0;
     for (const el of segEls) {
-      const from = toIata(el.querySelector(".seg-from").value);
-      const to = toIata(el.querySelector(".seg-to").value);
+      i++;
+      const fromRaw = el.querySelector(".seg-from").value.trim();
+      const toRaw = el.querySelector(".seg-to").value.trim();
       const date = el.querySelector(".seg-date").value;
-      if (!from || !to || !date) return { error: "多點進出：每個航段都要填出發地、目的地、日期。" };
+      const from = toIata(fromRaw);
+      const to = toIata(toRaw);
+      if (!fromRaw) return { error: `航段 ${i}：請填出發地。` };
+      if (!from) return { error: `航段 ${i}：找不到出發地「${fromRaw}」，請改用城市名或 IATA 三碼（如 TPE）。` };
+      if (!toRaw) return { error: `航段 ${i}：請填目的地。` };
+      if (!to) return { error: `航段 ${i}：找不到目的地「${toRaw}」，請改用城市名或 IATA 三碼（如 NRT）。` };
+      if (!date) return { error: `航段 ${i}：請選擇日期。` };
       legs.push({ from, to, date });
     }
     if (legs.length < 2) return { error: "多點進出至少需要 2 個航段。" };
     return { legs };
   }
 
-  const from = toIata(document.getElementById("from").value);
-  const to = toIata(document.getElementById("to").value);
+  const fromRaw = document.getElementById("from").value.trim();
+  const toRaw = document.getElementById("to").value.trim();
+  const from = toIata(fromRaw);
+  const to = toIata(toRaw);
   const date = document.getElementById("departDate").value;
-  if (!from) return { error: "找不到出發地，請輸入城市名或機場代碼（如 TPE）。" };
-  if (!to) return { error: "找不到目的地，請輸入城市名或機場代碼（如 NRT）。" };
+  if (!fromRaw) return { error: "請填出發地。" };
+  if (!from) return { error: `找不到出發地「${fromRaw}」，請改用城市名或 IATA 三碼（如 TPE）。` };
+  if (!toRaw) return { error: "請填目的地。" };
+  if (!to) return { error: `找不到目的地「${toRaw}」，請改用城市名或 IATA 三碼（如 NRT）。` };
   if (!date) return { error: "請選擇出發日期。" };
 
   if (mode === "round") {
