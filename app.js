@@ -6,10 +6,6 @@
 // ─────────────────────────────────────────────
 function fmtYYYYMMDD(d) { return d; }                 // Trip.com / Google
 function fmtYYMMDD(d) { return d.replace(/-/g, "").slice(2); } // Skyscanner 260810
-function fmtMMDDYYYY(d) {                              // Expedia 08/10/2026
-  const [y, m, dd] = d.split("-");
-  return `${m}/${dd}/${y}`;
-}
 function cabinSky(c) {
   // Skyscanner cabinclass: economy / premiumeconomy / business / first
   return c;
@@ -42,8 +38,12 @@ function buildLinks(legs, mode, adults, children, cabin) {
       url = `https://www.skyscanner.com.tw/transport/flights/${f}/${t}/${fmtYYMMDD(first.date)}/${fmtYYMMDD(legs[1].date)}/?adultsv2=${a}&cabinclass=${cabinSky(cabin)}`;
       tier = "full";
     } else {
-      url = `https://www.skyscanner.com.tw/transport/flights-multi-city/`;
-      tier = "home";
+      // 多點進出：用官方 referrals 多點路徑，origin0/destination0/date0 編號參數
+      const parts = legs.map((g, i) =>
+        `origin${i}=${g.from.toLowerCase()}&destination${i}=${g.to.toLowerCase()}&date${i}=${g.date}`
+      ).join("&");
+      url = `https://www.skyscanner.net/g/referrals/v1/flights/multicity/?${parts}&adultsv2=${a}&cabinclass=${cabinSky(cabin)}&locale=zh-TW&market=TW&currency=TWD`;
+      tier = "full";
     }
     links.push({ name: "Skyscanner", url, tier, alert: true });
   }
@@ -79,8 +79,11 @@ function buildLinks(legs, mode, adults, children, cabin) {
       url = `https://www.google.com/travel/flights?q=${encodeURIComponent(q)}`;
       tier = "full";
     } else {
-      url = `https://www.google.com/travel/flights`;
-      tier = "home";
+      // 多點進出：用 q= 描述每一段
+      const segs = legs.map((g) => `${g.from} to ${g.to} on ${g.date}`).join(", ");
+      const q = `Multi-city flights ${segs}`;
+      url = `https://www.google.com/travel/flights?q=${encodeURIComponent(q)}`;
+      tier = "full";
     }
     links.push({ name: "Google Flights", url, tier, alert: true });
   }
@@ -88,7 +91,7 @@ function buildLinks(legs, mode, adults, children, cabin) {
   // 4) Expedia 台灣（Tier B+：leg 參數，格式易改版）
   {
     let url, tier = "full";
-    const leg = (g) => `from:${g.from},to:${g.to},departure:${fmtMMDDYYYY(g.date)}TANYT`;
+    const leg = (g) => `from:${g.from},to:${g.to},departure:${g.date}TANYT`;
     const pax = `adults:${a}` + (children > 0 ? `,children:${children}` : "");
     if (mode === "oneway") {
       url = `https://www.expedia.com.tw/Flights-Search?trip=oneway&leg1=${encodeURIComponent(leg(first))}&passengers=${encodeURIComponent(pax)}&mode=search`;
@@ -103,12 +106,6 @@ function buildLinks(legs, mode, adults, children, cabin) {
     }
     links.push({ name: "Expedia", url, tier });
   }
-
-  // 5) 可樂旅遊（Tier B：開機票首頁，需手動再輸入）
-  links.push({ name: "可樂旅遊", url: "https://flight.colatour.com.tw/", tier: "home" });
-
-  // 6) 雄獅旅遊（Tier B：開機票首頁，需手動再輸入）
-  links.push({ name: "雄獅旅遊", url: "https://www.liontravel.com/category/zh-tw/flight", tier: "home" });
 
   return links;
 }
