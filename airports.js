@@ -70,6 +70,12 @@ const AIRPORTS = [
   { iata: "DOH", city: "杜哈", cityEn: "Doha", name: "哈馬德國際機場", country: "卡達" },
   { iata: "IST", city: "伊斯坦堡", cityEn: "Istanbul", name: "伊斯坦堡機場", country: "土耳其" },
 
+  // ── 非洲 ──
+  { iata: "ZNZ", city: "尚吉巴", cityEn: "Zanzibar", name: "阿貝德·阿瑪尼·卡魯姆國際機場（香料之島）", country: "坦尚尼亞" },
+  { iata: "ARK", city: "阿魯沙", cityEn: "Arusha", name: "阿魯沙機場", country: "坦尚尼亞" },
+  { iata: "JRO", city: "吉力馬札羅", cityEn: "Kilimanjaro", name: "吉力馬札羅國際機場", country: "坦尚尼亞" },
+  { iata: "DAR", city: "三蘭港", cityEn: "Dar es Salaam", name: "朱利葉斯·尼雷爾國際機場", country: "坦尚尼亞" },
+
   // ── 大洋洲 ──
   { iata: "SYD", city: "雪梨", cityEn: "Sydney", name: "京斯福史密斯機場", country: "澳洲" },
   { iata: "MEL", city: "墨爾本", cityEn: "Melbourne", name: "墨爾本機場", country: "澳洲" },
